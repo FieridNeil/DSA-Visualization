@@ -24,44 +24,36 @@ class myArray:
             print('{}'.format(self.data[i]))
 # End myArray class
 
-class Button:
-    def __init__(self, surface):
-        self.surface = surface
-        self.color = [0,0,0]
-        self.x = 0
-        self.y = 0
-        self.w = 100
-        self.h = 50
-        self.border = 0
+# NOTE:
+# we can draw rect without having to use an extra surface, however the reason a surface is used is because we want to fill the background
+# of the rect however we want while keeping border (rect itself has no background fill property and if we want to fill the background we have
+# to sacrifice border)
+
+# TODO: refactor code:
+# 1: make a base class for all the controls that has a contructor and a draw function
+# 2: Button class can be derived from label which is derived from base class with click functionality
+# 3: TextBox class can also be derived from Label class
+class Control:
+    """Parent class for all the controls"""
+    def __init__(self, window, *args, **kwargs):
+        # The window (screen) that will be drawn on
+        self.window : window
+        self.x : 100
+        self.y : 100
+        self.w : 200
+        self.h : 200
+        self.backgroundColor : [255, 255, 25]
+        self.borderColor : [0, 255, 0]
+        self.borderThickness : 1
+        self.rect : pygame.Rect(self.x, self.y, self.w, self.h)
+        self.surface : pygame.Surface((self.w, self.h))
+        #self.surface.fill(self.backgroundColor)
 
 
-    def setup(self, color, x, y, w, h, border):
-        self.color = color
-        self.x = x
-        self.y = y
-        self.w = w
-        self.h = h
-        self.border = border
 
-    def addText(self, text):
-        self.font = pygame.font.SysFont('Arial', 25)
-        self.text = self.font.render(text, True, (100,120,0))
-        self.text_rect = self.text.get_rect()
-        self.text_rect.center = (self.x + self.w/2, self.y + self.h/2)
-        self.surface.blit(self.text, self.text_rect)
-
-    def draw(self):
-        pygame.draw.rect(self.surface, self.color, [self.x, self.y, self.w, self.h], self.border)
-
-    def click(self, event, callback, *args, **kwargs):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            (mouseX, mouseY) = pygame.mouse.get_pos()
-            if(mouseX >= self.x and mouseX <= self.x + self.w and mouseY >= self.y and mouseY <= self.y + self.h) :
-                callback(*args, **kwargs)
-
-
-class testbutton:
+class Button():
     def __init__(self, window):
+        # The window (screen) that will be drawn on
         self.window = window
         self.x = 100;
         self.y = 100;
@@ -70,8 +62,7 @@ class testbutton:
         self.backgroundColor = [255, 255, 25]
         self.borderColor = [0, 255, 0]
         self.borderThickness = 1
-        # The rect will always be drawn on top of the surface, therefore pos x and pos y are set to be 0, 0
-        self.rect = pygame.Rect(0, 0, self.w, self.h)
+        self.rect = pygame.Rect(self.x, self.y, self.w, self.h)
         self.surface = pygame.Surface((self.w, self.h))
         self.surface.fill(self.backgroundColor)
 
@@ -86,28 +77,92 @@ class testbutton:
     def click(self, event, callback, *args, **kwargs):
         if event.type == pygame.MOUSEBUTTONDOWN:
             (mouseX, mouseY) = pygame.mouse.get_pos()
-            if(mouseX >= self.x and mouseX <= self.x + self.w and mouseY >= self.y and mouseY <= self.y + self.h) :
+            #if(mouseX >= self.x and mouseX <= self.x + self.w and mouseY >= self.y and mouseY <= self.y + self.h) :
+            if(self.rect.collidepoint((mouseX, mouseY))):
                 callback(*args, **kwargs)
 
     def draw(self):
-        pygame.draw.rect(self.surface, self.borderColor, self.rect, self.borderThickness)
-        self.window.blit(self.surface, (100, 100))
+        # Draw a rect on top of self.surface at position (0,0) relative to the self.surface.  It is different than the self.rect declared above
+        self.window.blit(self.surface, (self.x, self.y))
+        pygame.draw.rect(self.surface, self.borderColor, [0, 0, self.w, self.h], self.borderThickness)
+# End class button
+
+# Textbox
+class TextBox:
+    def __init__(self, window):
+        self.window = window
+        self.x = 200;
+        self.y = 0;
+        self.w = 100
+        self.h = 50
+        self.backgroundColor = [255, 255, 25]
+        self.borderColor = [0, 255, 0]
+        self.borderThickness = 1
+        self.rect = pygame.Rect(self.x, self.y, self.w, self.h)
+        self.surface = pygame.Surface((self.w, self.h))
+        self.surface.fill(self.backgroundColor)
+        self.active = False
+        self.text = ''
+        self.font = pygame.font.Font(None, 32)
+        self.text_surface = self.font.render(self.text, True, (255, 0 , 100))
 
 
+    def handle(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.rect.collidepoint(event.pos):
+                self.active = True
+                print(self.active)
+            else:
+                self.active = False
+
+        if event.type == pygame.KEYDOWN:
+            if self.active:
+                # When return key is pressed
+                if event.key == pygame.K_RETURN:
+                    print(self.text)
+                    self.text = ''
+                # Delete character
+                elif event.key == pygame.K_BACKSPACE:
+                    self.text = self.text[:-1]
+                else:
+                    self.text += event.unicode
+
+                # To clear the text or delete character when users press backspace, we fill the surface first with a solid color
+                self.surface.fill(self.backgroundColor)
+                # Then we update the surface with text
+                self.text_surface = self.font.render(self.text, True, (255, 0, 10))
+
+    def draw(self):
+        self.window.blit(self.surface, (self.x, self.y))
+        pygame.draw.rect(self.surface, self.borderColor, [0, 0, self.w, self.h], self.borderThickness)
+        self.surface.blit(self.text_surface, (0, 0))
+# End class TextBox
+
+# Label
+class Label:
+    def __init__(self, window):
+        self.window = window
+        self.x = 200;
+        self.y = 0;
+        self.w = 100
+        self.h = 50
+        self.backgroundColor = [255, 255, 25]
+        self.borderColor = [0, 255, 0]
+        self.borderThickness = 1
+        self.rect = pygame.Rect(self.x, self.y, self.w, self.h)
+        self.surface = pygame.Surface((self.w, self.h))
+        self.surface.fill(self.backgroundColor)
+        self.active = False
+        self.text = ''
+        self.font = pygame.font.Font(None, 32)
+        self.text_surface = self.font.render(self.text, True, (255, 0 , 100))
 
 
+    def draw(self):
+        self.window.blit(self.surface, (self.x, self.y))
+        pygame.draw.rect(self.surface, self.borderColor, [0, 0, self.w, self.h], self.borderThickness)
+        self.surface.blit(self.text_surface, (0, 0))
 
-
-arr = myArray()
-for i in range(0,10):
-    arr.append(i)
-    print(i)
-
-
-def printstuff():
-    print("Hello, this is a callback function")
-def add(x, y):
-    print(x + y)
 
 size = [1200,800]
 screen = pygame.display.set_mode(size)
@@ -119,20 +174,17 @@ button1 = pygame.Rect(0,0, 100, 50)
 button2 = pygame.Rect(0,button1.y + 60, 100, 50)
 button3 = pygame.Rect(0,button2.y + 60, 100, 50)
 button4 = Button(screen)
-button4.setup(color, 0, button3.y + 60, 100, 50, 1)
-button4.border = 0
-button4.color = [255, 0, 0]
+button4.addText("Hello")
+input1 = TextBox(screen)
 
-button5 = testbutton(screen)
-button5.addText("Hello")
 # Used to control the while loop
 done = False
 screen.fill(background)
-button4.addText("Hello")
 # Main loop
 while not done:
     for event in pygame.event.get():
         button4.click(event, lambda x, y, z: print(x + y + z), 10, 2, 30)
+        input1.handle(event)
         if event.type == pygame.QUIT:
             done = True
 
@@ -151,7 +203,7 @@ while not done:
     pygame.draw.rect(screen, color, button2, 1)
     pygame.draw.rect(screen, color, button3, 1)
     button4.draw()
-    button5.draw()
+    input1.draw()
     # Clear the screen each iteration
     pygame.display.flip()
 

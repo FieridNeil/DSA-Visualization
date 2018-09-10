@@ -1,32 +1,10 @@
 import pygame as pg
+import random as rd
 pg.init()
-window = pg.display.set_mode((840, 460))
+window = pg.display.set_mode((840, 460), pg.DOUBLEBUF, 32)
 window.fill((255, 255, 255))
 running = True
 clock = pg.time.Clock()
-
-class A:
-    def __init__(self, v1, v2, v3):
-        self.v1 = v1
-        self.v2 = v2
-        self.v3 = v3
-
-    def show(self):
-        print(self.v1, self.v2, self.v3)
-
-class B(A):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def show(self):
-        super().show()
-
-
-a = A(1,2,3)
-a.show()
-
-b = B(v1 = 5, v2 = 9, v3 = 1)
-b.show()
 
 class Control():
     def __init__(self, window, x, y, w, h, bgColor, borderColor, borderThickness):
@@ -36,12 +14,11 @@ class Control():
         self.y = y;
         self.w = w;
         self.h = h;
-        self.backgroundColor = bgColor
+        self.bgColor = bgColor
         self.borderColor = borderColor
         self.borderThickness = borderThickness
-        self.rect = pg.Rect(self.x, self.y, self.w, self.h)
+        self.rect = pg.Rect(self.x, self.y, self.w, self.h) # Needed for interaction (button click, mouseover, etc), not needed for decoration
         self.surface = pg.Surface((self.w, self.h))
-        self.surface.fill(self.backgroundColor)
 
     def addText(self, text):
         self.font = pg.font.SysFont('Arial', 25)
@@ -52,33 +29,51 @@ class Control():
 
     def draw(self):
         # Draw a rect on top of self.surface at position (0,0) relative to the self.surface.  It is different than the self.rect declared above
+        self.rect = pg.Rect(self.x, self.y, self.w, self.h) # Recreating when x, y, w, h change
+        self.surface = pg.Surface((self.w, self.h)) # Recreating when x, y, w, h change
+        self.surface.fill(self.bgColor)
         self.window.blit(self.surface, (self.x, self.y))
         pg.draw.rect(self.surface, self.borderColor, [0, 0, self.w, self.h], self.borderThickness)
-# End class button
+# End class Control
 
 
 class Button(Control):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def addText(self, text):
-        super().addText(*args, **kwargs)
 
+    def addText(self, *args, **kwargs):
+        super().addText(*args, **kwargs)
 
     def click(self, event, callback, *args, **kwargs):
         if event.type == pg.MOUSEBUTTONDOWN:
             (mouseX, mouseY) = pg.mouse.get_pos()
-            #if(mouseX >= self.x and mouseX <= self.x + self.w and mouseY >= self.y and mouseY <= self.y + self.h) :
             if(self.rect.collidepoint((mouseX, mouseY))):
                 callback(*args, **kwargs)
 
     def draw(self):
         super().draw()
 # End class button
-b1 = Button(window, 100, 200, 100, 50, [255, 255, 20], [0, 255, 0], 1)
-b2 = Button(window, 200, 200, 100, 50, [0, 255, 20], [20, 255, 0], 1)
+
+# Draw transparent surface 1
+s = pg.Surface((100,100), pg.SRCALPHA)   # per-pixel alpha
+s.fill((255,0,255,128))                         # notice the alpha value in the color
+window.blit(s, (0,0))
+
+# Draw transparent surface 2
+s2 = pg.Surface((100,100))  # the size of your rect
+s2.set_alpha(255)                # alpha level
+s2.fill((255,0 ,255))           # this fills the entire surface
+window.blit(s2, (100,0))    # (0,0) are the top-left coordinates
+
+
+b1 = Button(window, 100, 200, 100, 50, (255, 0, 20), (0, 255, 0), 1)
+
+b1.addText("Hi")
+b2 = Button(window, 200, 200, 100, 50, (0, 255, 20), (20, 255, 0), 1)
 
 while running:
+    # window.fill((255, 255, 255)) # To clear the screen
     clock.tick(10)
     for event in pg.event.get():
         b1.click(event, lambda x, y: print(x + y), 1, 2)
@@ -93,7 +88,11 @@ while running:
     # if s2running:
     #     s2.fill((random.randrange(0, 255), random.randrange(0, 255), random.randrange(0, 255)))
     #     window.blit(s2, (100,0))
-
+    b1.bgColor = (rd.randrange(0, 255), rd.randrange(0, 255), rd.randrange(0, 255))
+    b1.w = b1.w + 1
+    b1.h = b1.h + 1
+    b1.x = b1.x + 1
+    b1.y = b1.y + 1
     b1.draw()
     b2.draw()
     pg.display.flip()

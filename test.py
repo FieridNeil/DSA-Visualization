@@ -11,11 +11,17 @@ srunning = True
 window.blit(s, (0,0))
 
 s2 = pg.Surface((100, 100))
-s2.fill((50, 100, 150))
+s2.fill((50, 100, 250))
+s2.set_colorkey((250, 0 ,0))
+
 s2running = True
 window.blit(s2,(100,0))
 
-
+s3 = pg.Surface((50,50))
+s3.fill((255, 0 ,0))
+s2.blit(s3, (50,0))
+s.blit(s3, (0,0))
+window.blit(s2,(100,0))
 
 class Button():
     def __init__(self, window):
@@ -67,8 +73,6 @@ while running:
         if event.type == pg.QUIT:
             running = False
 
-
-    #
     # if srunning:
     #     s.fill((random.randrange(0, 255), random.randrange(0, 255), random.randrange(0, 255)))
     #     window.blit(s, (0,0))

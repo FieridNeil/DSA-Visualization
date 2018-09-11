@@ -37,17 +37,22 @@ class Vector:
 
     def addElms(self, elms):
         self.elms = elms
+        for i, elm in enumerate(self.elms):
+            box = Control(self.s, i * 100, 0, 100, 100, (255, 255, 255), (255, 0, 0), 1)
+            box.addText(str(elm))
+            self.a.append(box)
 
-    def addBack(self, *args):
-        self.elms.append(args[0])
+    def addBack(self, elm):
+        box = Control(self.s, self.a[-1].x + 100, 0, 100, 100, (255, 0, 200), (255, 0, 0), 1)
+        box.addText(str(elm))
+        self.a.append(box)
         self.draw()
 
     def draw(self):
         self.s.fill((0, 255, 255))
-        for i,val in enumerate(self.elms):
-            box = Control(self.s, i * 100, 0, 100, 100, (255, 255, 255), (255, 0, 0), 1)
-            box.addText(str(val))
-            box.draw()
+        for b in self.a:
+            b.bgColor = (255, 255, 255)
+            b.draw()
 # End class Vector
 
 v = Vector(sur1)

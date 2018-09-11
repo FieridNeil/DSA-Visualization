@@ -25,13 +25,27 @@ class Control():
 
     def draw(self):
         # Draw a rect on top of self.surface at position (0,0) relative to the self.surface.  It is different than the self.rect declared above
-        # self.rect = pg.Rect(self.x, self.y, self.w, self.h) # Recreating when x, y, w, h change
-        # self.surface = pg.Surface((self.w, self.h)) # Recreating when x, y, w, h change
-
         pg.draw.rect(self.surface, self.borderColor, [0, 0, self.w, self.h], self.borderThickness)
         self.window.blit(self.surface, (self.x, self.y))
 # End class Control
 
+class IControl(Control):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+    def addText(self, *args, **kwargs):
+        super().addText(*args, **kwargs)
+
+    def draw(self):
+        # Draw a rect on top of self.surface at position (0,0) relative to the self.surface.  It is different than the self.rect declared above
+        self.rect = pg.Rect(self.x, self.y, self.w, self.h) # Recreating when x, y, w, h change
+        self.surface = pg.Surface((self.w, self.h)) # Recreating when x, y, w, h change
+        self.surface.fill(self.bgColor)
+        super().draw()
+
+
+# End class IControl
 
 class Button(Control):
     def __init__(self, *args, **kwargs):

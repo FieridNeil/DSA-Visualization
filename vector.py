@@ -33,6 +33,7 @@ class Vector:
     def __init__(self, s):
         self.s = s
         self.elms = []
+        self.a = []
 
     def addElms(self, elms):
         self.elms = elms

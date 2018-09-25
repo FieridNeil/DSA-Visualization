@@ -5,10 +5,10 @@ class Control():
     def __init__(self, window, x, y, w, h, bgColor, borderColor, borderThickness):
         # The window (screen) that will be drawn on
         self.window = window
-        self.x = x;
-        self.y = y;
-        self.w = w;
-        self.h = h;
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
         self.bgColor = bgColor
         self.borderColor = borderColor
         self.borderThickness = borderThickness
@@ -17,8 +17,9 @@ class Control():
         self.surface.fill(self.bgColor)
 
     def addText(self, text):
+        self.t = text;
         self.font = pg.font.SysFont('Arial', 25)
-        self.text = self.font.render(text, True, (100,120,0))
+        self.text = self.font.render(self.t, True, (100,120,0))
         self.text_rect = self.text.get_rect()
         self.text_rect.center = (self.w/2, self.h/2)
         self.surface.blit(self.text, self.text_rect)
@@ -29,10 +30,10 @@ class Control():
         self.window.blit(self.surface, (self.x, self.y))
 # End class Control
 
+# Interactive control (will update everything)
 class IControl(Control):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
 
     def addText(self, *args, **kwargs):
         super().addText(*args, **kwargs)
@@ -42,7 +43,10 @@ class IControl(Control):
         self.rect = pg.Rect(self.x, self.y, self.w, self.h) # Recreating when x, y, w, h change
         self.surface = pg.Surface((self.w, self.h)) # Recreating when x, y, w, h change
         self.surface.fill(self.bgColor)
-        super().draw()
+        # draw text on top
+        pg.draw.rect(self.surface, self.borderColor, [0, 0, self.w, self.h], self.borderThickness)
+        self.surface.blit(self.text, self.text_rect)
+        self.window.blit(self.surface, (self.x, self.y))
 
 
 # End class IControl

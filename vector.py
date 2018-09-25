@@ -1,82 +1,137 @@
 import pygame as pg
+import copy
 from control import *
 
-pg.init()
-clock = pg.time.Clock()
-window = pg.display.set_mode((860, 480))
-window.fill((255, 255, 255))
-running = True
+#FIRST \CodeArrayFirst
+class Array:
+    def __init__(self, length, default):
+        if length < 0:
+            raise ValueError
+        self.length = length
+        self.elements = [default] * length
+    def __len__(self):
+        return self.length
+    def __iter__(self):
+        return iter(self.elements)
+    def __getitem__(self, i):
+        if i < 0 or i >= self.length:
+            raise IndexError
+        return self.elements[i]
+    def __setitem__(self, i, x):
+        if i < 0 or i >= self.length:
+            raise IndexError
+        self.elements[i] = x
+        return x
+#LAST \CodeArrayLast
 
-sur1 = pg.Surface((860, 300))
-sur1.fill((0, 255, 255))
-window.blit(sur1, (0, 100))
-
-label = Control(window, 0, 0, 100, 30, (255, 255, 255), (255, 255, 255), 1)
-label.addText('Elements: ')
-
-input = TextBox(window, 100, 0, 200, 30, (255, 255, 25), (0, 0, 0), 1)
-generateBtn = Button(window, 300, 0, 100, 30, (255, 255, 255), (231, 21, 32), 1)
-generateBtn.addText('Generate')
-Btn = Button(window, 400, 0, 100, 30, (255, 255, 255), (231, 21, 32), 1)
-Btn.addText('add back')
-def drawbox(items):
-    sur1.fill((0, 255, 255))
-    for i,val in enumerate(items):
-        box = Control(sur1, i * 100, 0, 100, 100, (255, 255, 255), (255, 0, 0), 1)
-        box.addText(str(val))
-        box.draw()
-
+#FIRST \CodeVectorFirst
 class Vector:
+    def __init__(self, length, default):
+        self.array = Array(length, default)
+        self.in_use = 0
+        for i in range(length):
+            self.add_back(default)
+    def __len__(self):
+        return self.in_use
+    def __iter__(self):
+        return VectorIter(self)
+    def __getitem__(self, i):
+        if i < 0 or i >= self.in_use:
+            raise IndexError
+        return self.array[i]
+    def __setitem__(self, i, x):
+        if i < 0 or i >= self.in_use:
+            raise IndexError
+        self.array[i] = x
+        return x
+    def add_back(self, x):
+        if self.in_use == len(self.array):
+            if len(self.array) == 0:
+                self._resize(1)
+            else:
+                self._resize(len(self.array) * 2)
+        self.array[self.in_use] = x
+        self.in_use += 1
+    def remove_back(self):
+        self.in_use -= 1
+        if (3 * self.in_use) < len(self.array):
+            self._resize(len(self.array) // 2)
+    def _resize(self, new_capacity):
+        new_array = Array(new_capacity, None)
+        for i in range(self.in_use):
+            new_array[i] = self.array[i]
+        self.array = new_array
+    def clear(self):
+        while self.in_use > 0:
+            self.remove_back()
+    def swap_idx(self, i, j):
+        temp = self.array[i]
+        self.array[i] = self.array[j]
+        self.array[j] = temp
+    def swap_elm(self, i, j):
+        pass
+
+#LAST \CodeVectorLast
+
+#FIRST \CodeVectorIterFirst
+class VectorIter:
+    def __init__(self, vector):
+        self.vector = vector
+        self.index = 0
+    def __iter__(self):
+        return self
+    def __next__(self):
+        if self.index == len(self.vector):
+            raise StopIteration
+        else:
+            self.index = self.index + 1
+            return self.vector[self.index-1]
+#LAST \CodeVectorIterLast
+
+class VectorAnim:
     ''' @s: the surface that will be drawn on
         @elms: a list of elements
     '''
     def __init__(self, s):
         self.s = s
-        self.elms = []
-        self.a = []
+        self.v = Vector(0, 0)
 
-    def addElms(self, elms):
-        self.elms = elms
-        for i, elm in enumerate(self.elms):
-            box = Control(self.s, i * 100, 0, 100, 100, (255, 255, 255), (255, 0, 0), 1)
-            box.addText(str(elm))
-            self.a.append(box)
+
+    def addElms(self, elm):
+        for i, e in enumerate(elm):
+            box = IControl(self.s, i * 100, 0, 100, 100, (255, 255, 255), (255, 0, 0), 1)
+            box.addText(str(e))
+            self.v.add_back(box)
 
     def addBack(self, elm):
-        box = Control(self.s, self.a[-1].x + 100, 0, 100, 100, (255, 0, 200), (255, 0, 0), 1)
+        # TODO: check if a vector exists
+        self.v[len(self.v) - 1].bgColor = (255, 255, 255)
+        box = IControl(self.s, self.v[len(self.v) - 1].x + 100, 0, 100, 100, (90, 130, 246), (255, 0, 0), 1)
         box.addText(str(elm))
-        self.a.append(box)
-        self.draw()
+        self.v.add_back(box)
+        for b in self.v:
+            print(b.bgColor)
+
+    def swap(self, i, j):
+        # self.v.swap_idx(i, j)
+        self.v[i].bgColor = (0, 255, 0) #Green
+        self.v[j].bgColor = (250, 255, 25) #yellow
+
+        temp = self.v[i]
+        self.v[i] = self.v[j]
+        self.v[j] = temp
+        temp = self.v[i].t
+        self.v[i].addText(self.v[j].t)
+        self.v[j].addText(temp)
+        del temp
+        for i, a in enumerate(self.v):
+            print(self.v[i].t)
+            print(self.v[i].bgColor)
+
+    def clear(self):
+        self.s.fill((255, 255, 255))
 
     def draw(self):
-        self.s.fill((0, 255, 255))
-        for b in self.a:
-            b.bgColor = (255, 255, 255)
+        for b in self.v:
             b.draw()
 # End class Vector
-
-v = Vector(sur1)
-
-
-while running:
-    # window.fill((255, 255, 255)) # To clear the screen
-    clock.tick(10)
-    for event in pg.event.get():
-        input.handle(event)
-        generateBtn.click(event, v.addElms, input.getText().split())
-        Btn.click(event, v.addBack, 0)
-        if event.type == pg.QUIT:
-            running = False
-    #End event
-
-    window.blit(sur1, (0, 100))
-    v.draw()
-    label.draw()
-    input.draw()
-    generateBtn.draw()
-    Btn.draw()
-    pg.display.flip()
-
-
-
-pg.quit()

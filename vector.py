@@ -68,6 +68,8 @@ class Vector:
         temp = self.array[i]
         self.array[i] = self.array[j]
         self.array[j] = temp
+
+        self.array[i], self.array[j] = self.array[j], self.array[i]
     def swap_elm(self, i, j):
         pass
 
@@ -117,12 +119,15 @@ class VectorAnim:
         self.v[i].bgColor = (0, 255, 0) #Green
         self.v[j].bgColor = (250, 255, 25) #yellow
 
-        temp = self.v[i]
-        self.v[i] = self.v[j]
-        self.v[j] = temp
+
+        temp = self.v[i].x
+        self.v[i].x = self.v[j].x
+        self.v[j].x = temp
+
         temp = self.v[i].t
-        self.v[i].addText(self.v[j].t)
-        self.v[j].addText(temp)
+        self.v[i].t = self.v[j].t
+        self.v[j].t = temp
+
         del temp
         for i, a in enumerate(self.v):
             print(self.v[i].t)

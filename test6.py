@@ -19,10 +19,11 @@ btn = pg.Rect(0, 0, 100, 50)
 
 def update():
     t = -math.pi
-    while t < math.pi:
-        rect.x += math.sin(t)
-        rect.y += math.cos(t)
-        t += 0.1
+    while rect.x < 300:
+        # rect.x += math.sin(t)
+        # rect.y += math.cos(t)
+        # t += 0.1
+        rect.x += 1
         sur.fill((5, 200, 255))
         pg.draw.rect(sur, (100, 200, 100), rect)
         window.blit(sur, (0,100))
@@ -34,7 +35,7 @@ print(math.sin(0))
 print(math.cos(0))
 print(math.pi)
 while running:
-    clock.tick(60)
+    clock.tick(30)
     window.fill((255, 255, 255))
     sur.fill((5, 200, 255))
 

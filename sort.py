@@ -9,6 +9,7 @@ def selection_sort(V):
                 least_index = i
 
         V.swap(least_index, k)
+        print(V)
         # temp = V.v[least_index]
         # V.v[least_index] = V.v[k]
         # V./v[k] = temp

@@ -97,10 +97,10 @@ class VectorAnim:
     def __init__(self, s):
         self.s = s
         self.v = Vector(0, 0)
-        self.clock = pg.time.Clock()
 
     def __len__(self):
         return len(self.v)
+
     def addElms(self, elm):
         for i, e in enumerate(elm):
             box = IControl(self.s, i * 100, 0, 100, 100, (255, 255, 255), (255, 0, 0), 1)
@@ -134,12 +134,20 @@ class VectorAnim:
         #     print(self.v[b].t)
         #     print(self.v[b].bgColor)
         # # self.v.swap_idx(i, j)
-        temp = self.v[i].x
-        # temp2 = self.v[j].x
+        temp1 = self.v[i].x
+        temp2 = self.v[j].x
+        a = 0
+        while (self.v[i].x <= temp2) and (self.v[j].x >= temp1):
+            a+= 1
+            print("{}".format(a))
+            self.v[i].x = self.v[i].x + 1
+            self.v[j].x = self.v[j].x - 1
+            self.s.fill((255, 255, 255))
+            self.draw()
+            pg.display.update(self.s.get_rect())
 
-
-        self.v[i].x = self.v[j].x
-        self.v[j].x = temp
+        # self.v[i].x = self.v[j].x
+        # self.v[j].x = temp
 
         # Swap the whole object
         temp = self.v[i]

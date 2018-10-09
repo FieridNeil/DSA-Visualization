@@ -57,7 +57,7 @@ v = VectorAnim(sur1)
 
 while running:
     # window.fill((255, 255, 255)) # To clear the screen
-    clock.tick(10)
+    clock.tick(30)
     for event in pg.event.get():
         input.handle(event)
         generateBtn.click(event, v.addElms, input.getText().split())

@@ -97,8 +97,10 @@ class VectorAnim:
     def __init__(self, s):
         self.s = s
         self.v = Vector(0, 0)
+        self.clock = pg.time.Clock()
 
-
+    def __len__(self):
+        return len(self.v)
     def addElms(self, elm):
         for i, e in enumerate(elm):
             box = IControl(self.s, i * 100, 0, 100, 100, (255, 255, 255), (255, 0, 0), 1)
@@ -114,24 +116,43 @@ class VectorAnim:
         for b in self.v:
             print(b.bgColor)
 
+    def swapAnim(self, i, j, temp1, temp2):
+
+
+        # Need to swap their x position first so they will be drawn in their correct place
+        # eg 1st will have the coord of 3rd and 3rd will have the coord of 1st
+
+        if (self.v[i].x <= temp2):
+            self.v[i].x = self.v[i].x + 1
+        if (self.v[j].x >= temp1):
+            self.v[j].x = self.v[j].x - 1
+
     def swap(self, i, j):
-        # self.v.swap_idx(i, j)
-        self.v[i].bgColor = (0, 255, 0) #Green
-        self.v[j].bgColor = (250, 255, 25) #yellow
-
-
+        # self.v[i].bgColor = (0, 255, 0) #Green
+        # self.v[j].bgColor = (250, 255, 25) #yellow
+        # for b, a in enumerate(self.v):
+        #     print(self.v[b].t)
+        #     print(self.v[b].bgColor)
+        # # self.v.swap_idx(i, j)
         temp = self.v[i].x
+        # temp2 = self.v[j].x
+
+
         self.v[i].x = self.v[j].x
         self.v[j].x = temp
 
-        temp = self.v[i].t
-        self.v[i].t = self.v[j].t
-        self.v[j].t = temp
-
-        del temp
-        for i, a in enumerate(self.v):
-            print(self.v[i].t)
-            print(self.v[i].bgColor)
+        # Swap the whole object
+        temp = self.v[i]
+        self.v[i] = self.v[j]
+        self.v[j] = temp
+        #
+        # del temp
+        # print('{} {}'.format(i, self.v[i]))
+        # print('{} {}'.format(j, self.v[j]))
+        #
+        # for b, a in enumerate(self.v):
+        #     print(self.v[b].t)
+        #     print(self.v[b].bgColor)
 
     def clear(self):
         self.s.fill((255, 255, 255))

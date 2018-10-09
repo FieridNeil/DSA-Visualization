@@ -9,6 +9,7 @@ class Control():
         self.y = y
         self.w = w
         self.h = h
+        self.t = ''
         self.bgColor = bgColor
         self.borderColor = borderColor
         self.borderThickness = borderThickness
@@ -24,6 +25,27 @@ class Control():
         self.text_rect.center = (self.w/2, self.h/2)
         self.surface.blit(self.text, self.text_rect)
 
+    def swap(self, other):
+        temp = other
+        other.x = self.x
+        other.y = self.y
+        other.w = self.w
+        other.h = self.h
+        other.t = self.t
+        other.bgColor = self.bgColor
+        other.borderColor = self.borderColor
+        other.borderThickness = self.borderThickness
+
+        self.x = temp.x
+        self.y = temp.y
+        self.w = temp.w
+        self.h = temp.h
+        self.t = temp.t
+        self.bgColor = temp.bgColor
+        self.borderColor = temp.borderColor
+        self.borderThickness = temp.borderThickness
+
+
     def draw(self):
         # Draw a rect on top of self.surface at position (0,0) relative to the self.surface.  It is different than the self.rect declared above
         pg.draw.rect(self.surface, self.borderColor, [0, 0, self.w, self.h], self.borderThickness)
@@ -37,6 +59,9 @@ class IControl(Control):
 
     def addText(self, *args, **kwargs):
         super().addText(*args, **kwargs)
+
+    def swap(self, other):
+        super().swap(other);
 
     def draw(self):
         # Draw a rect on top of self.surface at position (0,0) relative to the self.surface.  It is different than the self.rect declared above
@@ -55,15 +80,22 @@ class Button(Control):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-
+    # Add text to a button
     def addText(self, *args, **kwargs):
         super().addText(*args, **kwargs)
 
+    # Execute callback function when button being clicked with or without argument
     def click(self, event, callback, *args, **kwargs):
         if event.type == pg.MOUSEBUTTONDOWN:
             (mouseX, mouseY) = pg.mouse.get_pos()
             if(self.rect.collidepoint((mouseX, mouseY))):
                 callback(*args, **kwargs)
+
+    # Return true if the button is being clicked or held, else return false
+    def isClicked(self):
+        if pg.mouse.get_pressed()[0] and self.rect.collidepoint(pg.mouse.get_pos()):
+            return True
+        return False
 
 # End class button
 
@@ -77,8 +109,7 @@ class TextBox(Control):
         self.font = pg.font.Font(None, self.fontsize)
         self.text_surface = self.font.render(self.text, True, (255, 0 , 100))
 
-
-
+    # Handle user inputs
     def handle(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
             if self.rect.collidepoint(pg.mouse.get_pos()):

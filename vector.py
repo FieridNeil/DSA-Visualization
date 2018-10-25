@@ -94,9 +94,10 @@ class VectorAnim:
     ''' @s: the surface that will be drawn on
         @elms: a list of elements
     '''
-    def __init__(self, s):
+    def __init__(self, s, window):
         self.s = s
         self.v = Vector(0, 0)
+        self.window = window
 
     def __len__(self):
         return len(self.v)
@@ -144,6 +145,7 @@ class VectorAnim:
             self.v[j].x = self.v[j].x - 1
             self.s.fill((255, 255, 255))
             self.draw()
+            self.window.blit()
             pg.display.update(self.s.get_rect())
 
         # self.v[i].x = self.v[j].x

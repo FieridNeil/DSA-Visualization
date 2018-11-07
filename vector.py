@@ -64,14 +64,6 @@ class Vector:
     def clear(self):
         while self.in_use > 0:
             self.remove_back()
-    def swap_idx(self, i, j):
-        temp = self.array[i]
-        self.array[i] = self.array[j]
-        self.array[j] = temp
-
-        self.array[i], self.array[j] = self.array[j], self.array[i]
-    def swap_elm(self, i, j):
-        pass
 
 #LAST \CodeVectorLast
 
@@ -90,84 +82,14 @@ class VectorIter:
             return self.vector[self.index-1]
 #LAST \CodeVectorIterLast
 
-class VectorAnim:
-    ''' @s: the surface that will be drawn on
-        @elms: a list of elements
-    '''
-    def __init__(self, s, window):
-        self.s = s
-        self.v = Vector(0, 0)
-        self.window = window
-
-    def __len__(self):
-        return len(self.v)
-
-    def addElms(self, elm):
-        for i, e in enumerate(elm):
-            box = IControl(self.s, i * 100, 0, 100, 100, (255, 255, 255), (255, 0, 0), 1)
-            box.addText(str(e))
-            self.v.add_back(box)
-
-    def addBack(self, elm):
-        # TODO: check if a vector exists
-        self.v[len(self.v) - 1].bgColor = (255, 255, 255)
-        box = IControl(self.s, self.v[len(self.v) - 1].x + 100, 0, 100, 100, (90, 130, 246), (255, 0, 0), 1)
-        box.addText(str(elm))
-        self.v.add_back(box)
-        for b in self.v:
-            print(b.bgColor)
-
-    def swapAnim(self, i, j, temp1, temp2):
-
-
-        # Need to swap their x position first so they will be drawn in their correct place
-        # eg 1st will have the coord of 3rd and 3rd will have the coord of 1st
-
-        if (self.v[i].x <= temp2):
-            self.v[i].x = self.v[i].x + 1
-        if (self.v[j].x >= temp1):
-            self.v[j].x = self.v[j].x - 1
-
+class VectorLog(Vector):
+    def __init__(self, length, default):
+        super().__init__(length, default)
+        self.log = []
     def swap(self, i, j):
-        # self.v[i].bgColor = (0, 255, 0) #Green
-        # self.v[j].bgColor = (250, 255, 25) #yellow
-        # for b, a in enumerate(self.v):
-        #     print(self.v[b].t)
-        #     print(self.v[b].bgColor)
-        # # self.v.swap_idx(i, j)
-        temp1 = self.v[i].x
-        temp2 = self.v[j].x
-        a = 0
-        while (self.v[i].x <= temp2) and (self.v[j].x >= temp1):
-            a+= 1
-            print("{}".format(a))
-            self.v[i].x = self.v[i].x + 1
-            self.v[j].x = self.v[j].x - 1
-            self.s.fill((255, 255, 255))
-            self.draw()
-            self.window.blit()
-            pg.display.update(self.s.get_rect())
-
-        # self.v[i].x = self.v[j].x
-        # self.v[j].x = temp
-
-        # Swap the whole object
-        temp = self.v[i]
-        self.v[i] = self.v[j]
-        self.v[j] = temp
-        #
-        # del temp
-        # print('{} {}'.format(i, self.v[i]))
-        # print('{} {}'.format(j, self.v[j]))
-        #
-        # for b, a in enumerate(self.v):
-        #     print(self.v[b].t)
-        #     print(self.v[b].bgColor)
-
-    def clear(self):
-        self.s.fill((255, 255, 255))
-
-    def draw(self):
-        for b in self.v:
-            b.draw()
-# End class Vector
+        self.log.append((i,j))
+        temp = self.array[i]
+        self.array[i] = self.array[j]
+        self.array[j] = temp
+    def add(self, q):
+        self.log.append(q)

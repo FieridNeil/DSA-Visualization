@@ -1,0 +1,14 @@
+{% extends 'layout.html'%}
+
+
+{% block body %}
+  <h1>Selection Sort</h1>
+  {% if data %}
+    {% for i in func(data) %}
+      <li>{{ i }}</li>
+    {% endfor %}
+  {% endif %}
+
+{% endblock %}
+
+<script src="../test.js" charset="utf-8"></script>

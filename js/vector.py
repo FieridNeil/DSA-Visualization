@@ -1,7 +1,3 @@
-import pygame as pg
-import copy
-from control import *
-
 #FIRST \CodeArrayFirst
 class Array:
     def __init__(self, length, default):

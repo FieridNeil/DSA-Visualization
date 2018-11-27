@@ -52,3 +52,45 @@ def sequential_search(V, q):
         if e == q:
             return e
     return None
+
+def binary_search(V, q):
+    return binary_search_range(V, q, 0, len(V) - 1)
+
+def binary_search_range(V, q, s, e):
+    V.add([s, e])
+
+    if s == e:
+        return None
+    else:
+        half = (s + e) // 2
+        if q < V[half]:
+            return binary_search_range(V, q, s, half)
+        elif q == V[half]:
+            return half
+        else:
+            return binary_search_range(V, q, half+1, e)
+
+def merge_sort(V):
+    if len(V) <= 1:
+        return V
+    else:
+        half = len(V) // 2
+        # L = V[0] ... V[half-1]
+        # R = V[half] ... V[n-1]
+        return merge(merge_sort(L), merge_sort(R))
+
+def merge(L, R):
+    S = Vector()
+    li = ri = 0
+    while li < len(L) and ri < len(R):
+        if L[li] <= R[ri]:
+            S.add_back(L[li])
+            li += 1
+        else:
+            S.add_back(R[ri])
+            ri += 1
+        for i in range(li, len(L)):
+            S.add_back(L[i])
+        for i in range(ri, len(R)):
+            S.add_back(R[i])
+    return S

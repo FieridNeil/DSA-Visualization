@@ -3,7 +3,7 @@ import math
 import random
 from vector import *
 from sort import *
-
+from classes import *
 # Variable initialization
 pg.init()
 window = pg.display.set_mode((680,480))
@@ -11,42 +11,8 @@ window.fill((255, 255, 255))
 running = True
 font = pg.font.SysFont('Arial', 15)
 
-class MySurface:
-    def __init__(self, parent, x, y, w, h, color, font, value):
-        # self.font = font
-        self.parent = parent
-        self.x = x
-        self.y = y
-        self.w = w
-        self.h = h
-        self.v = value
-        self.color = color
-        self.surface = pg.Surface((self.w, self.h))
-        self.color = color
-        self.text = font.render(str(value), False, (0, 0, 0))
 
-    def draw(self):
-        self.surface.fill(self.color)
-        self.surface.blit(self.text, (self.w / 2 - self.text.get_width() / 2, self.h / 2 - self.text.get_height() / 2))
-        self.parent.blit(self.surface, (self.x, self.y))
 
-    def collide(self, point):
-        if(pg.Rect(self.x, self.y, self.w, self.h).collidepoint(point)):
-            return True
-        return False
-
-    def __lt__(self, other):
-        return self.v < other.v
-
-# SELECTION SORT
-# Vector to animate
-isV = VectorLog(0, 0)
-# VectorLog just to log the index pair, has to have the same number and order of elements as v
-islog = VectorLog(0,0)
-for i in range(0, 10):
-    val = random.randrange(0, 20)
-    isV.add_back(MySurface(window, i * 50, 100, 50, 50, (255, random.randrange(0, 255), 255), font, val))
-    islog.add_back(val)
 
 # QUICK SORT
 # Vector to animate
@@ -132,6 +98,7 @@ while running:
             t = 9.5
             # delete the first element so that the 2nd element becomes first again (act like a queue)
             del islog.log[0]
+
     # end animation state
 
     # animation state, if there is something in the log queue

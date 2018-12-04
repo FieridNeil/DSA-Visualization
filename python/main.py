@@ -13,6 +13,12 @@ quickSortBtn = MySurface(window, 100, 0, 100, 50, (255, 200, 250), font, 'quick 
 sequentialSearchBtn = MySurface(window, 200, 0, 100, 50, (255, 100, 250), font, 'sequential search')
 binarySearchBtn = MySurface(window, 300, 0, 100, 50, (0, 100, 250), font, 'binary search')
 
+
+# v = Vector(0,0)
+# v = random.sample(range(20), 10)
+# for i in v:
+#     print(i)
+
 while running:
 
     for e in pg.event.get():

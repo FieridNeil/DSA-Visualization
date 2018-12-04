@@ -115,6 +115,10 @@ def quick_sort_module():
             if e.type == pg.MOUSEBUTTONDOWN:
                 if sort.collide(e.pos):
                     log = inplace_quick_sort(log)
+                    for i in log.log:
+                        print(i)
+                    for key, value in log.extra.items():
+                        print(key, value)
                     sorting = True
                 if home.collide(e.pos):
                     running = False
@@ -181,6 +185,8 @@ def sequential_search_module():
     window = pg.display.set_mode((640, 480))
     running = True
     font = pg.font.SysFont('Arial', 15)
+    elmToSearch = random.randrange(0, 100)
+    text = font.render("Searching for: " + str(elmToSearch), False, (0, 0, 0))
 
     # Button
     search = MySurface(window, 0, 0, 100, 50, (255, 200, 200), font, 'search')
@@ -189,9 +195,9 @@ def sequential_search_module():
     v = VectorLog(0, 0)
     # VectorLog just to log the comparing element has to have the same number and order of elements as v
     log = VectorLog(0,0)
-    for i in range(0, 10):
-        val = random.randrange(0, 20)
-        v.add_back(MySurface(window, i * 50, 200, 50, 50, (random.randrange(0, 255), 255, 255), font, val))
+    arr = random.sample(range(20), 10)
+    for i, val in enumerate(arr):
+        v.add_back(MySurface(window, i * 50, 200, 50, 50, (50, 255, 255), font, val))
         log.add_back(val)
 
     while running:
@@ -200,8 +206,12 @@ def sequential_search_module():
             if e.type == pg.QUIT:
                 running = False
             if e.type == pg.MOUSEBUTTONDOWN:
+                for elm in v:
+                    if elm.collide(e.pos):
+                        elmToSearch = elm.v
+                        text = font.render("Searching for: " + str(elmToSearch), False, (0, 0, 0))
                 if search.collide(e.pos):
-                    ans = sequential_search(log, 15)
+                    ans = sequential_search(log, elmToSearch)
                 if home.collide(e.pos):
                     running = False
         # end event handling
@@ -209,11 +219,11 @@ def sequential_search_module():
         if log.log:
             pg.time.delay(200)
             if ans == None:
-                v[log.log[0]].color = (255, 0, 0)
+                v[log.log[0]].color = (200, 200, 200)
                 del log.log[0]
             else:
                 if len(log.log) > 1:
-                    v[log.log[0]].color = (255, 0, 0)
+                    v[log.log[0]].color = (200, 200, 200)
                     del log.log[0]
                 else:
                     v[log.log[0]].color = (0, 255 , 0)
@@ -223,6 +233,7 @@ def sequential_search_module():
 
         search.draw()
         home.draw()
+        window.blit(text, (0, 100))
         pg.display.flip()
 
     # end while
@@ -235,6 +246,9 @@ def binary_search_module():
     running = True
     font = pg.font.SysFont('Arial', 15)
     searching = False
+    elmToSearch = random.randrange(0, 100)
+    text = font.render("Searching for: " + str(elmToSearch), False, (0, 0, 0))
+    idx = 0
     # Button
     search = MySurface(window, 0, 0, 100, 50, (255, 200, 200), font, 'search')
     home = MySurface(window, 100, 0, 100, 50, (255, 200, 200), font, 'return to menu')
@@ -242,25 +256,31 @@ def binary_search_module():
     v = VectorLog(0, 0)
     # VectorLog just to log the comparing element has to have the same number and order of elements as v
     log = VectorLog(0,0)
-    for i in range(0, 10):
-        val = random.randrange(0, 20)
-        log.add_back(val)
+    arr = random.sample(range(20), 10)
+    for i in arr:
+        log.add_back(i)
 
-    # v = inplace_quick_sort(v)
     log = inplace_quick_sort(log)
     # clear the log because quicksort will also store the indices that are swapping, which we arent interested  in
     log.log = []
     for i, val in enumerate(log):
         v.add_back(MySurface(window, i * 50, 200, 50, 50, (90, 255, 255), font, val))
-    idx = 0
+
+
     while running:
         window.fill((255, 255, 255))
+
         for e in pg.event.get():
             if e.type == pg.QUIT:
                 running = False
             if e.type == pg.MOUSEBUTTONDOWN:
+                for elm in v:
+                    if elm.collide(e.pos):
+                        elmToSearch = elm.v
+                        text = font.render("Searching for: " + str(elmToSearch), False, (0, 0, 0))
                 if search.collide(e.pos):
-                    ans = binary_search(log, 15)
+                    print(elmToSearch)
+                    ans = binary_search(log, elmToSearch)
                     print(ans)
                     for i in log.log:
                         print(i)
@@ -276,7 +296,7 @@ def binary_search_module():
             if log.log:
                 if idx < log.log[0][0]:
                     v[idx].color = (200, 200, 200)
-                elif (log.log[0][1] - log.log[0][0] > -1):
+                elif (log.log[0][1] - 1 - log.log[0][0] >= 0):
                     v[log.log[0][0]].color = (90, 255, 255)
                     log.log[0][0] += 1
                 elif idx > len(log.log):
@@ -288,7 +308,7 @@ def binary_search_module():
             else:
                 for i in v:
                     i.color = (200, 200, 200)
-                if ans:
+                if ans != None:
                     v[ans].color = (50, 255, 50)
 
 
@@ -299,6 +319,7 @@ def binary_search_module():
 
         search.draw()
         home.draw()
+        window.blit(text, (0, 100))
         pg.display.flip()
 
     # end while

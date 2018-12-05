@@ -83,6 +83,7 @@ class VectorLog(Vector):
         super().__init__(length, default)
         self.log = []
         self.extra = {}
+        self.pivot = []
     def swap(self, i, j):
         if i != j:
             self.log.append((i,j))
@@ -94,3 +95,5 @@ class VectorLog(Vector):
     def addExtra(self, **kwargs):
         for key,value in kwargs.items():
             self.extra[key] = value
+    def addpivot(self, p):
+        self.pivot.append(p)

@@ -94,18 +94,24 @@ def quick_sort_module():
     font = pg.font.SysFont('Arial', 15)
     t = 9.5     # input of parameterized parabola equation for animation movement.  9.5 seems to work thru trials and errors
     sorting = False
+    pivot = 0
     # Button
     sort = MySurface(window, 0, 0, 100, 50, (255, 200, 200), font, 'sort')
     home = MySurface(window, 100, 0, 100, 50, (255, 200, 200), font, 'return to menu')
+    text = font.render("pivot: " + str(pivot), False, (0, 0, 0))
 
     # Vector to animate
     v = VectorLog(0, 0)
     # VectorLog just to log the index pair, has to have the same number and order of elements as v
     log = VectorLog(0,0)
-    for i in range(0, 10):
-        val = random.randrange(0, 20)
+    arr = random.sample(range(20), 10)
+    for i, val in enumerate(arr):
         v.add_back(MySurface(window, i * 50, 200, 50, 50, (255, 150, 255), font, val))
         log.add_back(val)
+    # for i in range(0, 10):
+    #     val = random.randrange(0, 20)
+    #     v.add_back(MySurface(window, i * 50, 200, 50, 50, (255, 150, 255), font, val))
+    #     log.add_back(val)
 
     while running:
         window.fill((255, 255, 255))
@@ -120,6 +126,8 @@ def quick_sort_module():
                     for key, value in log.extra.items():
                         print(key, value)
                     sorting = True
+                    for j in log.pivot:
+                        print(j)
                 if home.collide(e.pos):
                     running = False
         # end event handling
@@ -127,10 +135,12 @@ def quick_sort_module():
         if sorting:
             # if there is something in the log queue, do the animation
             if log.log:
+                if log.pivot:
+                    text = font.render("pivot: " + str(log.pivot[0]), False, (0, 0, 0))
                 # if log.extra['pivot']:
                     # v[log.extra['pivot']].color = (255, 0, 0)
                     # print(log.extra['pivot'])
-                pg.time.delay(50)
+                pg.time.delay(100)
                 # get the first (i,j) index pair in the log queue
                 i = log.log[0][0]
                 j = log.log[0][1]
@@ -159,6 +169,7 @@ def quick_sort_module():
                     t = 9.5
                     # delete the first element so that the 2nd element becomes first again (act like a queue)
                     del log.log[0]
+                    del log.pivot[0]
                     # the ith item is already in the right place, however the jth item might not, so we need to set the color back to the same color as the whole array
                     v[j].color = (255, 150, 255)
             else:
@@ -174,6 +185,7 @@ def quick_sort_module():
 
         sort.draw()
         home.draw()
+        window.blit(text, (0, 100))
         pg.display.flip()
 
     # end while

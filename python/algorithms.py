@@ -22,6 +22,7 @@ def inplace_quick_sort_range(V, s, e):
 
 def inplace_partition(V, s, e):
     pivot = V[random.randint(s, e-1)]
+    V.addpivot(pivot)
     lte = s
     ges = e
     while lte < ges:
@@ -89,10 +90,10 @@ def merge(L, R):
         else:
             S.add_back(R[ri])
             ri += 1
-        for i in range(li, len(L)):
-            S.add_back(L[i])
-        for i in range(ri, len(R)):
-            S.add_back(R[i])
+    for i in range(li, len(L)):
+        S.add_back(L[i])
+    for i in range(ri, len(R)):
+        S.add_back(R[i])
     return S
 
 v = [9,8,7,6,5,4,3,2,1]

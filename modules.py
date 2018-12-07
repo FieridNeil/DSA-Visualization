@@ -1,7 +1,7 @@
 import math
 from classes import *
-from vector import *
 from algorithms import *
+
 def selection_sort_module():
     window = pg.display.set_mode((640, 480))
     running = True
@@ -9,16 +9,16 @@ def selection_sort_module():
     t = 9.5     # input of parameterized parabola equation for animation movement.  9.5 seems to work thru trials and errors
     sorting = False
     # Button
-    sort = MySurface(window, 0, 0, 100, 50, (255, 200, 200), font, 'sort')
-    home = MySurface(window, 100, 0, 100, 50, (255, 200, 200), font, 'return to menu')
+    sort = Rectangle(window, 0, 0, 100, 50, (255, 200, 200), font, 'sort')
+    home = Rectangle(window, 100, 0, 100, 50, (255, 200, 200), font, 'return to menu')
 
     # Vector to animate
     v = VectorLog(0, 0)
     # VectorLog just to log the index pair, has to have the same number and order of elements as v
     log = VectorLog(0,0)
-    for i in range(0, 10):
-        val = random.randrange(0, 20)
-        v.add_back(MySurface(window, i * 50, 200, 50, 50, (255, 150, 255), font, val))
+    arr = random.sample(range(20), 10)
+    for i, val in enumerate(arr):
+        v.add_back(Rectangle(window, i * 50, 200, 50, 50, (255, 150, 255), font, val))
         log.add_back(val)
 
     while running:
@@ -95,9 +95,9 @@ def quick_sort_module():
     t = 9.5     # input of parameterized parabola equation for animation movement.  9.5 seems to work thru trials and errors
     sorting = False
     pivot = 0
-    # Button
-    sort = MySurface(window, 0, 0, 100, 50, (255, 200, 200), font, 'sort')
-    home = MySurface(window, 100, 0, 100, 50, (255, 200, 200), font, 'return to menu')
+    # Button and text
+    sort = Rectangle(window, 0, 0, 100, 50, (255, 200, 200), font, 'sort')
+    home = Rectangle(window, 100, 0, 100, 50, (255, 200, 200), font, 'return to menu')
     text = font.render("pivot: " + str(pivot), False, (0, 0, 0))
 
     # Vector to animate
@@ -106,12 +106,8 @@ def quick_sort_module():
     log = VectorLog(0,0)
     arr = random.sample(range(20), 10)
     for i, val in enumerate(arr):
-        v.add_back(MySurface(window, i * 50, 200, 50, 50, (255, 150, 255), font, val))
+        v.add_back(Rectangle(window, i * 50, 200, 50, 50, (255, 150, 255), font, val))
         log.add_back(val)
-    # for i in range(0, 10):
-    #     val = random.randrange(0, 20)
-    #     v.add_back(MySurface(window, i * 50, 200, 50, 50, (255, 150, 255), font, val))
-    #     log.add_back(val)
 
     while running:
         window.fill((255, 255, 255))
@@ -135,11 +131,9 @@ def quick_sort_module():
         if sorting:
             # if there is something in the log queue, do the animation
             if log.log:
+                # print out the pivot on the screen
                 if log.pivot:
                     text = font.render("pivot: " + str(log.pivot[0]), False, (0, 0, 0))
-                # if log.extra['pivot']:
-                    # v[log.extra['pivot']].color = (255, 0, 0)
-                    # print(log.extra['pivot'])
                 pg.time.delay(100)
                 # get the first (i,j) index pair in the log queue
                 i = log.log[0][0]
@@ -169,7 +163,8 @@ def quick_sort_module():
                     t = 9.5
                     # delete the first element so that the 2nd element becomes first again (act like a queue)
                     del log.log[0]
-                    del log.pivot[0]
+                    if log.pivot:
+                        del log.pivot[0]
                     # the ith item is already in the right place, however the jth item might not, so we need to set the color back to the same color as the whole array
                     v[j].color = (255, 150, 255)
             else:
@@ -201,15 +196,15 @@ def sequential_search_module():
     text = font.render("Searching for: " + str(elmToSearch), False, (0, 0, 0))
 
     # Button
-    search = MySurface(window, 0, 0, 100, 50, (255, 200, 200), font, 'search')
-    home = MySurface(window, 100, 0, 100, 50, (255, 200, 200), font, 'return to menu')
+    search = Rectangle(window, 0, 0, 100, 50, (255, 200, 200), font, 'search')
+    home = Rectangle(window, 100, 0, 100, 50, (255, 200, 200), font, 'return to menu')
 
     v = VectorLog(0, 0)
     # VectorLog just to log the comparing element has to have the same number and order of elements as v
     log = VectorLog(0,0)
     arr = random.sample(range(20), 10)
     for i, val in enumerate(arr):
-        v.add_back(MySurface(window, i * 50, 200, 50, 50, (50, 255, 255), font, val))
+        v.add_back(Rectangle(window, i * 50, 200, 50, 50, (50, 255, 255), font, val))
         log.add_back(val)
 
     while running:
@@ -255,15 +250,15 @@ def sequential_search_module():
 
 def binary_search_module():
     window = pg.display.set_mode((640, 480))
-    running = True
     font = pg.font.SysFont('Arial', 15)
+    running = True
     searching = False
     elmToSearch = random.randrange(0, 100)
     text = font.render("Searching for: " + str(elmToSearch), False, (0, 0, 0))
     idx = 0
     # Button
-    search = MySurface(window, 0, 0, 100, 50, (255, 200, 200), font, 'search')
-    home = MySurface(window, 100, 0, 100, 50, (255, 200, 200), font, 'return to menu')
+    search = Rectangle(window, 0, 0, 100, 50, (255, 200, 200), font, 'search')
+    home = Rectangle(window, 100, 0, 100, 50, (255, 200, 200), font, 'return to menu')
 
     v = VectorLog(0, 0)
     # VectorLog just to log the comparing element has to have the same number and order of elements as v
@@ -276,7 +271,7 @@ def binary_search_module():
     # clear the log because quicksort will also store the indices that are swapping, which we arent interested  in
     log.log = []
     for i, val in enumerate(log):
-        v.add_back(MySurface(window, i * 50, 200, 50, 50, (90, 255, 255), font, val))
+        v.add_back(Rectangle(window, i * 50, 200, 50, 50, (90, 255, 255), font, val))
 
 
     while running:
@@ -303,8 +298,7 @@ def binary_search_module():
         # animation state
         if searching:
             pg.time.delay(100)
-            # for elm in v:
-            #     elm.color = (200, 200, 200)
+            # magic
             if log.log:
                 if idx < log.log[0][0]:
                     v[idx].color = (200, 200, 200)
@@ -322,8 +316,6 @@ def binary_search_module():
                     i.color = (200, 200, 200)
                 if ans != None:
                     v[ans].color = (50, 255, 50)
-
-
         # end animation
 
         for sur in v:
@@ -339,5 +331,70 @@ def binary_search_module():
     window.fill((255, 255, 255))
 # End sequential_search
 
-if __name__ == '__main__':
-    binary_search_module()
+# BST module
+def _inorder(tree, parent, x, y, w, h, color, font, diffX):
+    '''diffX is the X difference between parent node and its children nodes
+        the difference is shortened by half going from parent to children
+                  O
+                 / \
+               /     \
+             /         \
+            O -- 100 -- 0
+          /    \     /    \
+        O - 50 - O O - 50 - O
+    '''
+    if tree != None:
+        _inorder(tree.leftChild, parent, x - diffX, y + 50, w, h, color, font, diffX / 2)
+        if(tree.leftChild != None):
+            pg.draw.aaline(parent, (0, 0, 0), (x + 25, y+ 25), (x + 25 - diffX, y + 25 + 50), 1)
+        Ellipse(parent, x, y, w, h, color, font, tree.get()).draw()
+        if(tree.rightChild != None):
+            pg.draw.aaline(parent, (0, 0, 0), (x + 25, y + 25), (x + 25 + diffX, y + 25 +50), 1)
+        _inorder(tree.rightChild, parent, x + diffX, y + 50, w, h, color, font, diffX / 2)
+
+def binary_search_tree_module():
+    window = pg.display.set_mode((640, 480))
+    running = True
+    font = pg.font.SysFont('Arial', 15)
+    # Button
+    home = Rectangle(window, 0, 0, 100, 50, (255, 200, 200), font, 'return to menu')
+
+    mytree = BST()
+    mytree.insert(8)
+    mytree.insert(4)
+    mytree.insert(2)
+    mytree.insert(1)
+    mytree.insert(3)
+    mytree.insert(6)
+    mytree.insert(5)
+    mytree.insert(7)
+    mytree.insert(12)
+    mytree.insert(10)
+    mytree.insert(9)
+    mytree.insert(11)
+    mytree.insert(14)
+    mytree.insert(13)
+    mytree.insert(15)
+
+    print(mytree.root.get())
+
+    while running:
+        window.fill((255, 255, 255))
+
+        for e in pg.event.get():
+            if e.type == pg.QUIT:
+                running = False
+            if e.type == pg.MOUSEBUTTONDOWN:
+                if home.collide(e.pos):
+                    running = False
+        # end event handling
+        # function that draws the tree
+        _inorder(mytree.root, window, 300, 100, 50, 50, (90, 250, 255), font, 150)
+        home.draw()
+
+        pg.display.flip()
+
+    # end while
+    # Final clear of the screen before return to the menu
+    window.fill((255, 255, 255))
+# End bst

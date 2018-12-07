@@ -32,20 +32,13 @@ def inplace_partition(V, s, e):
             ges -= 1
         else:
             V.swap(lte, ges-1)
-            # temp = V[lte]
-            # V[lte] = V[ges-1]
-            # V[ges-1] = temp
             lte += 1
     eqe = lte
     for i in range(ges, e):
         if V[i] == pivot:
             V.swap(eqe, i)
-            # temp = V[eqe]
-            # V[i] = V[eqe]
-            # V[eqe] = temp
             eqe += 1
     return lte, eqe
-
 
 def sequential_search(V, q):
     for i, e in enumerate(V):
@@ -96,5 +89,53 @@ def merge(L, R):
         S.add_back(R[i])
     return S
 
-v = [9,8,7,6,5,4,3,2,1]
-v = merge_sort(v)
+class Node:
+    def __init__(self, val):
+        self.val = val
+        self.leftChild = None
+        self.rightChild = None
+
+    def get(self):
+        return self.val
+
+    def set(self, val):
+        self.val = val
+
+
+class BST:
+    def __init__(self):
+        self.root = None
+
+    def setRoot(self, val):
+        self.root = Node(val)
+
+    def insert(self, val):
+        if(self.root is None):
+            self.setRoot(val)
+        else:
+            self.insertNode(self.root, val)
+
+    def insertNode(self, currentNode, val):
+        if(val <= currentNode.val):
+            if(currentNode.leftChild):
+                self.insertNode(currentNode.leftChild, val)
+            else:
+                currentNode.leftChild = Node(val)
+        elif(val > currentNode.val):
+            if(currentNode.rightChild):
+                self.insertNode(currentNode.rightChild, val)
+            else:
+                currentNode.rightChild = Node(val)
+
+    def find(self, val):
+        return self.findNode(self.root, val)
+
+    def findNode(self, currentNode, val):
+        if(currentNode is None):
+            return False
+        elif(val == currentNode.val):
+            return True
+        elif(val < currentNode.val):
+            return self.findNode(currentNode.leftChild, val)
+        else:
+            return self.findNode(currentNode.rightChild, val)

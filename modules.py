@@ -368,7 +368,6 @@ def binary_search_tree_module():
 
     # Button
     home = Rectangle(window, 0, 0, 100, 50, (255, 200, 200), font, 'return to menu')
-    generateTreeBtn = Rectangle(window, 100, 0, 100, 50, (255, 200, 200), font, 'generate tree')
     preorderBtn = Rectangle(window, 200, 0, 100, 50, (255, 250, 0), font, 'preorder')
     inorderBtn = Rectangle(window, 300, 0, 100, 50, (200, 0, 200), font, 'inorder')
     postorderBtn = Rectangle(window, 400, 0, 100, 50, (100, 200, 100), font, 'postorder')

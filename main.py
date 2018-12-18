@@ -11,7 +11,8 @@ font2 = pg.font.SysFont('Arial', 30)
 
 # Text
 welcomeText = font2.render("Data Structure and Algorithm Visualization", False, (0, 0, 0))
-authorText = font2.render("By: Hympert Nguyen", False, (0, 0, 0))
+authorText = font2.render("Hympert Nguyen", False, (0, 0, 0))
+emailText = font2.render("hympert@gmail.com", False, (0, 0, 0))
 sortText = font.render("Sorting Algorithms", False, (0, 0, 0))
 searchText = font.render("Searching Algorithms", False, (0, 0, 0))
 treeText = font.render("Tree Data Structure", False, (0, 0, 0))
@@ -50,7 +51,8 @@ while running:
     # Draw text and buttons
     window.fill((180, 220, 255))
     window.blit(welcomeText, (100, 10))
-    window.blit(authorText, (400, 400))
+    window.blit(authorText, (450, 400))
+    window.blit(emailText, (380, 430))
     window.blit(sortText, (50, 80))
     selectionSortBtn.draw()
     quickSortBtn.draw()

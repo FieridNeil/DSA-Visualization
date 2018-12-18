@@ -117,13 +117,7 @@ def quick_sort_module():
             if e.type == pg.MOUSEBUTTONDOWN:
                 if sort.collide(e.pos):
                     log = inplace_quick_sort(log)
-                    for i in log.log:
-                        print(i)
-                    for key, value in log.extra.items():
-                        print(key, value)
                     sorting = True
-                    for j in log.pivot:
-                        print(j)
                 if home.collide(e.pos):
                     running = False
         # end event handling
@@ -134,7 +128,7 @@ def quick_sort_module():
                 # print out the pivot on the screen
                 if log.pivot:
                     text = font.render("pivot: " + str(log.pivot[0]), False, (0, 0, 0))
-                pg.time.delay(100)
+                pg.time.delay(50)
                 # get the first (i,j) index pair in the log queue
                 i = log.log[0][0]
                 j = log.log[0][1]
@@ -144,9 +138,6 @@ def quick_sort_module():
                     neg = 1
                     if t <= 0:
                         neg = -1
-                    # set color of the 2 currently being animated values to another color for visual effect
-                    v[i].color = (255, 255, 0)
-                    v[j].color = (255, 255, 0)
                     # to get consistent different distance between 2 points we want to move, get the index and multiply with 50 (default width)
                     # v[j].x - v[i].x where i < j will NOT work since v[i].x and v[j].x are changing with every iteration
                     v[i].x += math.fabs(j * 50 - i * 50) / 20
@@ -286,11 +277,7 @@ def binary_search_module():
                         elmToSearch = elm.v
                         text = font.render("Searching for: " + str(elmToSearch), False, (0, 0, 0))
                 if search.collide(e.pos):
-                    print(elmToSearch)
                     ans = binary_search(log, elmToSearch)
-                    print(ans)
-                    for i in log.log:
-                        print(i)
                     searching = True
                 if home.collide(e.pos):
                     running = False
@@ -332,7 +319,7 @@ def binary_search_module():
 # End sequential_search
 
 # BST module
-def _inorder(tree, parent, x, y, w, h, color, font, diffX):
+def generateTree(tree, parent, x, y, w, h, color, font, diffX):
     '''diffX is the X difference between parent node and its children nodes
         the difference is shortened by half going from parent to children
                   O
@@ -344,21 +331,47 @@ def _inorder(tree, parent, x, y, w, h, color, font, diffX):
         O - 50 - O O - 50 - O
     '''
     if tree != None:
-        _inorder(tree.leftChild, parent, x - diffX, y + 50, w, h, color, font, diffX / 2)
         if(tree.leftChild != None):
             pg.draw.aaline(parent, (0, 0, 0), (x + 25, y+ 25), (x + 25 - diffX, y + 25 + 50), 1)
-        Ellipse(parent, x, y, w, h, color, font, tree.get()).draw()
         if(tree.rightChild != None):
             pg.draw.aaline(parent, (0, 0, 0), (x + 25, y + 25), (x + 25 + diffX, y + 25 +50), 1)
-        _inorder(tree.rightChild, parent, x + diffX, y + 50, w, h, color, font, diffX / 2)
+        generateTree(tree.leftChild, parent, x - diffX, y + 50, w, h, color, font, diffX / 2)
+        Ellipse(parent, x, y, w, h, color, font, tree.get()).draw()
+        generateTree(tree.rightChild, parent, x + diffX, y + 50, w, h, color, font, diffX / 2)
+
+def preorder(tree, parent, x, y, w, h, color, font, diffX, l):
+    if tree != None:
+        l.append(Ellipse(parent, x, y, w, h, color, font, tree.get()))
+        preorder(tree.leftChild, parent, x - diffX, y + 50, w, h, color, font, diffX / 2, l)
+        preorder(tree.rightChild, parent, x + diffX, y + 50, w, h, color, font, diffX / 2, l)
+
+def inorder(tree, parent, x, y, w, h, color, font, diffX, l):
+    if tree != None:
+        inorder(tree.leftChild, parent, x - diffX, y + 50, w, h, color, font, diffX / 2, l)
+        l.append(Ellipse(parent, x, y, w, h, color, font, tree.get()))
+        inorder(tree.rightChild, parent, x + diffX, y + 50, w, h, color, font, diffX / 2, l)
+
+def postorder(tree, parent, x, y, w, h, color, font, diffX, l):
+    if tree != None:
+        postorder(tree.leftChild, parent, x - diffX, y + 50, w, h, color, font, diffX / 2, l)
+        postorder(tree.rightChild, parent, x + diffX, y + 50, w, h, color, font, diffX / 2, l)
+        l.append(Ellipse(parent, x, y, w, h, color, font, tree.get()))
 
 def binary_search_tree_module():
     window = pg.display.set_mode((640, 480))
+    window.fill((255, 255, 255))
     running = True
     font = pg.font.SysFont('Arial', 15)
+    font2 = pg.font.SysFont('Arial', 30)
+    text = font2.render("", False, (0, 0, 0))
+
+
     # Button
     home = Rectangle(window, 0, 0, 100, 50, (255, 200, 200), font, 'return to menu')
-
+    generateTreeBtn = Rectangle(window, 100, 0, 100, 50, (255, 200, 200), font, 'generate tree')
+    preorderBtn = Rectangle(window, 200, 0, 100, 50, (255, 250, 0), font, 'preorder')
+    inorderBtn = Rectangle(window, 300, 0, 100, 50, (200, 0, 200), font, 'inorder')
+    postorderBtn = Rectangle(window, 400, 0, 100, 50, (100, 200, 100), font, 'postorder')
     mytree = BST()
     mytree.insert(8)
     mytree.insert(4)
@@ -376,10 +389,10 @@ def binary_search_tree_module():
     mytree.insert(13)
     mytree.insert(15)
 
-    print(mytree.root.get())
-
+    # store the nodes that is traversed
+    traversalOrder = []
+    displayText = ""
     while running:
-        window.fill((255, 255, 255))
 
         for e in pg.event.get():
             if e.type == pg.QUIT:
@@ -387,10 +400,54 @@ def binary_search_tree_module():
             if e.type == pg.MOUSEBUTTONDOWN:
                 if home.collide(e.pos):
                     running = False
+                if preorderBtn.collide(e.pos):
+                    preorder(mytree.root, window, 300, 100, 50, 50, (255, 250, 0), font, 150, traversalOrder)
+                    # The purpose of the line below is to make the list 1 element longer so that the traversal order
+                    # will draw 1 more "nonsense" element, it helps the last element of the list to "change" before reset
+                    traversalOrder.append(traversalOrder[0])
+                    displayText = "Preorder Traversal: "
+                    # clear the screen, and redraw the tree
+                    window.fill((255, 255, 255))
+                    generateTree(mytree.root, window, 300, 100, 50, 50, (90, 250, 255), font, 150)
+
+                if inorderBtn.collide(e.pos):
+                    inorder(mytree.root, window, 300, 100, 50, 50, (200, 0, 200), font, 150, traversalOrder)
+                    traversalOrder.append(traversalOrder[0])
+                    displayText = "Inorder Traversal: "
+                    # clear the screen, and redraw the tree
+                    window.fill((255, 255, 255))
+                    generateTree(mytree.root, window, 300, 100, 50, 50, (90, 250, 255), font, 150)
+
+                if postorderBtn.collide(e.pos):
+                    postorder(mytree.root, window, 300, 100, 50, 50, (100, 200, 100), font, 150, traversalOrder)
+                    traversalOrder.append(traversalOrder[0])
+                    displayText = "Postorder Traversal: "
+                    # clear the screen, and redraw the tree
+                    window.fill((255, 255, 255))
+                    generateTree(mytree.root, window, 300, 100, 50, 50, (90, 250, 255), font, 150)
+
+
+
         # end event handling
-        # function that draws the tree
-        _inorder(mytree.root, window, 300, 100, 50, 50, (90, 250, 255), font, 150)
+        if len(traversalOrder) > 0:
+            traversalOrder[0].draw()
+            # To avoid the extra node from printing on the screen
+            if len(traversalOrder) > 1:
+                displayText += str(traversalOrder[0].v)
+                displayText += " "
+                text = font2.render(displayText, False, (0, 0, 0))
+            pg.time.delay(500)
+            del traversalOrder[0]
+        else:
+            generateTree(mytree.root, window, 300, 100, 50, 50, (90, 250, 255), font, 150)
+
+
         home.draw()
+        preorderBtn.draw()
+        inorderBtn.draw()
+        postorderBtn.draw()
+        window.blit(text, (10, 350))
+
 
         pg.display.flip()
 
